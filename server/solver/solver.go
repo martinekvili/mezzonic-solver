@@ -27,22 +27,22 @@ func getFlipVector(index uint8) (flipVector uint32) {
 	flipVector = utils.SetBit(flipVector, index)
 
 	// North
-	if index > 4 {
-		flipVector = utils.SetBit(flipVector, index-5)
+	if index > columnCount-1 {
+		flipVector = utils.SetBit(flipVector, index-columnCount)
 	}
 
 	// South
-	if index < 20 {
-		flipVector = utils.SetBit(flipVector, index+5)
+	if index < (rowCount-1)*columnCount {
+		flipVector = utils.SetBit(flipVector, index+columnCount)
 	}
 
 	// West
-	if index%5 > 0 {
+	if index%columnCount > 0 {
 		flipVector = utils.SetBit(flipVector, index-1)
 	}
 
 	// East
-	if index%5 < 4 {
+	if index%columnCount < columnCount-1 {
 		flipVector = utils.SetBit(flipVector, index+1)
 	}
 

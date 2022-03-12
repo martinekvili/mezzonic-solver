@@ -1,4 +1,6 @@
 package solver
 
-const matrixSize = uint8(25)
-const constantRow = uint8(25)
+const rowCount = uint8(5)
+const columnCount = uint8(5)
+const matrixSize = rowCount * columnCount
+const constantRow = matrixSize
