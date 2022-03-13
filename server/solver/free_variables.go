@@ -10,7 +10,7 @@ type freeVariables struct {
 	affectedRows []uint32
 }
 
-func fixFreeVariables(augmentedMatrix *[matrixSize]uint32, finalRow uint8) {
+func fixFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) {
 	// Find the free variables
 	freeVariables := findFreeVariables(augmentedMatrix, finalRow)
 	if len(freeVariables.indexes) == 0 {
@@ -35,13 +35,13 @@ func fixFreeVariables(augmentedMatrix *[matrixSize]uint32, finalRow uint8) {
 	}
 }
 
-func findFreeVariables(augmentedMatrix *[matrixSize]uint32, finalRow uint8) freeVariables {
+func findFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) freeVariables {
 	indexes := make([]uint8, 0)
 	affectedRowsMap := make(map[uint8]uint32)
 
 	// Using signed index variables to eliminate the overflow at 0
 	signedI := int8(finalRow - 1)
-	signedJ := int8(matrixSize - 1)
+	signedJ := int8(MatrixSize - 1)
 
 	// Check the matrix for free variables
 	for signedI >= 0 && signedJ >= 0 {

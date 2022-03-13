@@ -1,22 +1,46 @@
 package main
 
 import (
-	"fmt"
-	"server/solver"
-	"server/utils"
+	"context"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"server/api"
+	"syscall"
+	"time"
 )
 
 func main() {
-	solvable, solution := solver.SolveBoard(65536)
-	if solvable {
-		fmt.Println("The puzzle can be solved by clicking on the following tiles:")
-		for i := uint8(0); i < 25; i++ {
-			if utils.TestBit(solution, i) {
-				fmt.Printf("(%v, %v) ", i/5+1, i%5+1)
-			}
-		}
-		fmt.Println()
-	} else {
-		fmt.Println("There is no solution")
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("$PORT must be set")
 	}
+
+	r := api.SetupHttpHandler()
+	srv := &http.Server{
+		Addr: "0.0.0.0:" + port,
+		// Good practice to set timeouts to avoid Slowloris attacks.
+		WriteTimeout: time.Second * 15,
+		ReadTimeout:  time.Second * 15,
+		IdleTimeout:  time.Second * 60,
+		Handler:      r, // Pass our instance of gorilla/mux in.
+	}
+
+	// Run our server in a goroutine so that it doesn't block.
+	go func() {
+		log.Printf("Starting web server, listening on port %v\n", port)
+		if err := srv.ListenAndServe(); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	<-ctx.Done()
+
+	log.Println("Starting graceful shutdown process")
+	srv.Shutdown(ctx)
+	log.Println("Shutdown successful")
 }

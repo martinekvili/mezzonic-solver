@@ -5,7 +5,7 @@ import (
 	"server/utils"
 )
 
-func gaussianEliminate(augmentedMatrix *[matrixSize]uint32) (bool, uint32) {
+func gaussianEliminate(augmentedMatrix *[MatrixSize]uint32) (bool, uint32) {
 	// Bring to row echelon form
 	finalRow := transformToRowEchelon(augmentedMatrix)
 
@@ -19,17 +19,17 @@ func gaussianEliminate(augmentedMatrix *[matrixSize]uint32) (bool, uint32) {
 	return true, solution
 }
 
-func transformToRowEchelon(augmentedMatrix *[matrixSize]uint32) uint8 {
+func transformToRowEchelon(augmentedMatrix *[MatrixSize]uint32) uint8 {
 	i := uint8(0)
 	j := uint8(0)
 
-	for i < matrixSize && j < matrixSize {
+	for i < MatrixSize && j < MatrixSize {
 		if !utils.TestBit(augmentedMatrix[i], j) && !swapPivot(augmentedMatrix, i, j) {
 			j++
 			continue
 		}
 
-		for t := i + 1; t < matrixSize; t++ {
+		for t := i + 1; t < MatrixSize; t++ {
 			if utils.TestBit(augmentedMatrix[t], i) {
 				augmentedMatrix[t] ^= augmentedMatrix[i]
 			}
@@ -42,8 +42,8 @@ func transformToRowEchelon(augmentedMatrix *[matrixSize]uint32) uint8 {
 	return i
 }
 
-func swapPivot(augmentedMatrix *[matrixSize]uint32, i, j uint8) bool {
-	for t := i + 1; t < matrixSize; t++ {
+func swapPivot(augmentedMatrix *[MatrixSize]uint32, i, j uint8) bool {
+	for t := i + 1; t < MatrixSize; t++ {
 		if utils.TestBit(augmentedMatrix[t], j) {
 			augmentedMatrix[i], augmentedMatrix[t] = augmentedMatrix[t], augmentedMatrix[i]
 			return true
@@ -53,8 +53,8 @@ func swapPivot(augmentedMatrix *[matrixSize]uint32, i, j uint8) bool {
 	return false
 }
 
-func hasForbiddenRow(augmentedMatrix *[matrixSize]uint32, finalRow uint8) bool {
-	for t := finalRow; t < matrixSize; t++ {
+func hasForbiddenRow(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) bool {
+	for t := finalRow; t < MatrixSize; t++ {
 		if augmentedMatrix[t] > 0 {
 			return true
 		}
@@ -63,7 +63,7 @@ func hasForbiddenRow(augmentedMatrix *[matrixSize]uint32, finalRow uint8) bool {
 	return false
 }
 
-func determineSolution(augmentedMatrix *[matrixSize]uint32, finalRow uint8) (solution uint32) {
+func determineSolution(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) (solution uint32) {
 	// Using signed index variables to eliminate the overflow at 0
 	signedI := int8(finalRow - 1)
 
@@ -86,7 +86,7 @@ func determineSolution(augmentedMatrix *[matrixSize]uint32, finalRow uint8) (sol
 	fixFreeVariables(augmentedMatrix, finalRow)
 
 	// Determine the solution
-	for i := uint8(0); i < matrixSize; i++ {
+	for i := uint8(0); i < MatrixSize; i++ {
 		pivotColumn := uint8(bits.TrailingZeros32(augmentedMatrix[i]))
 
 		// Update the solution according to the current row
