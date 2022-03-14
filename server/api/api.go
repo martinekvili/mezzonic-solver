@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"server/solver"
@@ -22,12 +23,17 @@ func SetupHttpHandler() *mux.Router {
 func solutionHandler(w http.ResponseWriter, r *http.Request) {
 	board, err := parseBoard(r)
 	if err != nil {
+		log.Println("Bad request due to invalid board number", err)
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "invalid board number")
+
+		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	solvable, solutionNumber := solver.SolveBoard(board)
+
+	log.Printf("Successful request for board %v, solvable: %v, solution: %v", board, solvable, solutionNumber)
+	w.WriteHeader(http.StatusOK)
 	writeSolution(w, solvable, solutionNumber)
 }
 
