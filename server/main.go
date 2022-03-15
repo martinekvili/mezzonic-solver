@@ -17,14 +17,14 @@ func main() {
 		log.Fatal("$PORT must be set")
 	}
 
-	r := api.SetupHttpHandler()
+	handler := api.SetupHttpHandler()
 	srv := &http.Server{
 		Addr: "0.0.0.0:" + port,
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
-		Handler:      r, // Pass our instance of gorilla/mux in.
+		Handler:      handler, // Pass our instance of gorilla/mux in.
 	}
 
 	// Run our server in a goroutine so that it doesn't block.

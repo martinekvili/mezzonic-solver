@@ -13,11 +13,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func SetupHttpHandler() *mux.Router {
-	r := mux.NewRouter()
-	r.HandleFunc("/api/solutions/{board:[0-9a-v]{1,5}}", solutionHandler).Methods("GET")
-	r.Use(loggingMiddleware)
-	return r
+func SetupHttpHandler() http.Handler {
+	router := mux.NewRouter()
+	router.HandleFunc("/api/solutions/{board:[0-9a-v]{1,5}}", solutionHandler).Methods("GET")
+
+	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
+	return loggedRouter
 }
 
 func solutionHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +34,6 @@ func solutionHandler(w http.ResponseWriter, r *http.Request) {
 	solvable, solutionNumber := solver.SolveBoard(board)
 
 	log.Printf("Successful request for board %v, solvable: %v, solution: %v", board, solvable, solutionNumber)
-	w.WriteHeader(http.StatusOK)
 	writeSolution(w, solvable, solutionNumber)
 }
 
@@ -51,8 +51,4 @@ func parseBoard(r *http.Request) (uint32, error) {
 	}
 
 	return uint32(board), nil
-}
-
-func loggingMiddleware(next http.Handler) http.Handler {
-	return handlers.LoggingHandler(os.Stdout, next)
 }

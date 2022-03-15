@@ -21,6 +21,7 @@ func writeSolution(w http.ResponseWriter, solvable bool, solutionNumber uint32) 
 	solution := createSolution(solvable, solutionNumber)
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(solution)
 }
 
