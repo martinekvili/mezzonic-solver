@@ -7,14 +7,9 @@ import (
 	"server/utils"
 )
 
-type index struct {
-	Row    uint8 `json:"row"`
-	Column uint8 `json:"column"`
-}
-
 type solution struct {
-	HasSolution bool    `json:"hasSolution"`
-	Solution    []index `json:"solution"`
+	HasSolution bool  `json:"hasSolution"`
+	Solution    []int `json:"solution"`
 }
 
 func writeSolution(w http.ResponseWriter, solvable bool, solutionNumber uint32) {
@@ -30,11 +25,10 @@ func createSolution(solvable bool, solutionNumber uint32) solution {
 		return solution{false, nil}
 	}
 
-	indexes := make([]index, 0)
+	indexes := make([]int, 0)
 	for i := uint8(0); i < solver.MatrixSize; i++ {
 		if utils.TestBit(solutionNumber, i) {
-			index := index{i / solver.ColumnCount, i % solver.ColumnCount}
-			indexes = append(indexes, index)
+			indexes = append(indexes, int(i))
 		}
 	}
 

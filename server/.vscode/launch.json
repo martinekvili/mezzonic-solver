@@ -11,7 +11,8 @@
             "mode": "auto",
             "program": "${fileDirname}",
             "env": {
-                "PORT": "8080"
+                "PORT": "8080",
+                "FRONTEND_URL": "http://localhost:3000"
             }
         }
     ]

@@ -18,7 +18,14 @@ func SetupHttpHandler() http.Handler {
 	router.HandleFunc("/api/solutions/{board:[0-9a-v]{1,5}}", solutionHandler).Methods("GET")
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
-	return loggedRouter
+	allowedOrigin := os.Getenv("FRONTEND_URL")
+	if allowedOrigin == "" {
+		return loggedRouter
+	}
+
+	corsAllowedOrigins := handlers.AllowedOrigins([]string{allowedOrigin})
+	corsAllowedMethods := handlers.AllowedMethods([]string{"GET"})
+	return handlers.CORS(corsAllowedOrigins, corsAllowedMethods)(loggedRouter)
 }
 
 func solutionHandler(w http.ResponseWriter, r *http.Request) {

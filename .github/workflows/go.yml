@@ -20,14 +20,12 @@ jobs:
         go-version: 1.17
 
     - name: Build
-      run: |
-        cd server
-        go build -v
+      working_directory: ./server
+      run: go build -v
 
     - name: Run vet
-      run: |
-        cd server
-        go vet
+      working_directory: ./server
+      run: go vet
 
   deploy:
     runs-on: ubuntu-latest
