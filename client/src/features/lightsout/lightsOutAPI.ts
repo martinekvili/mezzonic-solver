@@ -8,7 +8,8 @@ export interface Solution {
 
 export async function solve(board: boolean[]) {
   const response = await axios.get<Solution>(
-    `http://localhost:8080/api/solutions/${getParamForBoard(board)}`
+    `solutions/${getParamForBoard(board)}`,
+    { baseURL: process.env.REACT_APP_API_BASE_URL, timeout: 30000 }
   );
 
   return response.data;

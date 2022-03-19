@@ -27,3 +27,5 @@ jobs:
     - name: Build
       working-directory: ./client
       run: yarn build
+      env:
+        REACT_APP_API_BASE_URL: ${{secrets.API_BASE_URL}}
