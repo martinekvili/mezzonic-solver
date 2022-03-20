@@ -71,7 +71,7 @@ function getInformation(status: LightsOutStatus) {
         <>
           Click the tiles marked with{" "}
           <FlagTwoToneIcon color="secondary" fontSize="small" /> to solve the
-          puzzle!
+          puzzle! You can click them in any order you like.
         </>
       );
     case "done":
