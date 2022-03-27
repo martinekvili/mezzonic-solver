@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"server/api"
+	"server/solver"
 	"syscall"
 	"time"
 )
@@ -16,6 +17,9 @@ func main() {
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
+
+	solver := solver.New()
+	api := api.New(solver)
 
 	handler := api.SetupHttpHandler()
 	srv := &http.Server{

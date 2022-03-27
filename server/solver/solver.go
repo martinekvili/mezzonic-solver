@@ -4,7 +4,17 @@ import (
 	"server/utils"
 )
 
-func SolveBoard(board uint32) (bool, uint32) {
+type BoardSolver interface {
+	SolveBoard(board uint32) (bool, uint32)
+}
+
+type boardSolver struct{}
+
+func New() BoardSolver {
+	return boardSolver{}
+}
+
+func (boardSolver) SolveBoard(board uint32) (bool, uint32) {
 	augmentedMatrix := getAugmentedMatrix(board)
 	return gaussianEliminate(&augmentedMatrix)
 }

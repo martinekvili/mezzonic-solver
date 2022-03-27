@@ -13,9 +13,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func SetupHttpHandler() http.Handler {
+type Api interface {
+	SetupHttpHandler() http.Handler
+}
+
+type api struct {
+	solver solver.BoardSolver
+}
+
+func New(solver solver.BoardSolver) Api {
+	return &api{solver: solver}
+}
+
+func (api *api) SetupHttpHandler() http.Handler {
 	router := mux.NewRouter()
-	router.HandleFunc("/api/solutions/{board:[0-9a-v]{1,5}}", solutionHandler).Methods("GET")
+	router.HandleFunc("/api/solutions/{board:[0-9a-v]{1,5}}", api.solutionHandler).Methods("GET")
 
 	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
 	allowedOrigin := os.Getenv("FRONTEND_URL")
@@ -28,7 +40,7 @@ func SetupHttpHandler() http.Handler {
 	return handlers.CORS(corsAllowedOrigins, corsAllowedMethods)(loggedRouter)
 }
 
-func solutionHandler(w http.ResponseWriter, r *http.Request) {
+func (api *api) solutionHandler(w http.ResponseWriter, r *http.Request) {
 	board, err := parseBoard(r)
 	if err != nil {
 		log.Println("Bad request due to invalid board number", err)
@@ -38,7 +50,7 @@ func solutionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	solvable, solutionNumber := solver.SolveBoard(board)
+	solvable, solutionNumber := api.solver.SolveBoard(board)
 
 	log.Printf("Successful request for board %v, solvable: %v, solution: %v", board, solvable, solutionNumber)
 	writeSolution(w, solvable, solutionNumber)
