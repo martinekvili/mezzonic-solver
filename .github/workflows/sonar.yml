@@ -29,7 +29,9 @@ jobs:
           args: >
             -Dsonar.organization=martinekvili
             -Dsonar.projectKey=mezzonic-solver
+            -Dsonar.sources=.
             -Dsonar.exclusions=**/*_test.go,**/report.json
+            _Dsonar.tests=.
             -Dsonar.test.inclusions=**/*_test.go
             -Dsonar.go.tests.reportPaths=server/report.json
             -Dsonar.go.coverage.reportPaths=server/coverage.out
