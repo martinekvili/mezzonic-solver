@@ -29,8 +29,10 @@ jobs:
           args: >
             -Dsonar.organization=martinekvili
             -Dsonar.projectKey=mezzonic-solver
+            -Dsonar.exclusions=**/*_test.go
+            -Dsonar.test.inclusions=**/*_test.go
             -Dsonar.go.tests.reportPaths=server/report.json
-            -Dsonar.go.coverage.reportPaths=coverage.out
+            -Dsonar.go.coverage.reportPaths=server/coverage.out
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
