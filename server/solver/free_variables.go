@@ -10,7 +10,19 @@ type freeVariables struct {
 	affectedRows []uint32
 }
 
-func fixFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) {
+type FreeVariableFixer interface {
+	fixFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8)
+}
+
+type freeVariableFixer struct {
+	optimizer Optimizer
+}
+
+func NewFreeVariableFixer(optimizer Optimizer) FreeVariableFixer {
+	return &freeVariableFixer{optimizer: optimizer}
+}
+
+func (f *freeVariableFixer) fixFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) {
 	// Find the free variables
 	freeVariables := findFreeVariables(augmentedMatrix, finalRow)
 	if len(freeVariables.indexes) == 0 {
@@ -18,7 +30,7 @@ func fixFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) {
 	}
 
 	// Find the optimal values for the free variables using brute force
-	optimalValues := determineOptimalValues(&freeVariables)
+	optimalValues := f.optimizer.determineOptimalValues(&freeVariables)
 
 	// Set the free variables and do back-substitution according to the optimal values
 	for i := uint8(0); i < uint8(len(freeVariables.indexes)); i++ {
@@ -70,47 +82,6 @@ func findFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) free
 	}
 
 	return freeVariables{indexes, affectedRows}
-}
-
-func determineOptimalValues(freeVariables *freeVariables) uint32 {
-	optimalValues := uint32(0)
-	optimalResult := calculateResultForValues(freeVariables, optimalValues)
-
-	for values := uint32(1); values < 1<<len(freeVariables.indexes); values++ {
-		result := calculateResultForValues(freeVariables, values)
-		if optimalResult > result {
-			optimalValues = values
-			optimalResult = result
-		}
-	}
-
-	return optimalValues
-}
-
-func calculateResultForValues(freeVariables *freeVariables, values uint32) (result uint8) {
-	rows := make([]uint32, len(freeVariables.affectedRows))
-	copy(rows, freeVariables.affectedRows)
-
-	// Do back-substitution according to the current values
-	for i := uint8(0); i < uint8(len(freeVariables.indexes)); i++ {
-		value := utils.TestBit(values, i)
-		vector := getFreeVariableVector(freeVariables.indexes[i], value)
-
-		for t := uint8(0); t < uint8(len(rows)); t++ {
-			if utils.TestBit(rows[t], freeVariables.indexes[i]) {
-				rows[t] ^= vector
-			}
-		}
-	}
-
-	// Calculate the amount of "clicks" required in case of this solution
-	for i := uint8(0); i < uint8(len(rows)); i++ {
-		if utils.TestBit(rows[i], constantRow) {
-			result++
-		}
-	}
-
-	return result
 }
 
 func getFreeVariableVector(index uint8, value bool) (vector uint32) {
