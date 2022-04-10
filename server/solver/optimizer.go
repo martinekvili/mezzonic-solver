@@ -54,6 +54,14 @@ func calculateResultForValues(freeVariables *freeVariables, values uint32) (resu
 	}
 
 	// Calculate the amount of "clicks" required in case of this solution
+	// The "clicks" needed for the free variables
+	for i := uint8(0); i < uint8(len(freeVariables.indexes)); i++ {
+		if utils.TestBit(values, i) {
+			result++
+		}
+	}
+
+	// The "clicks" needed for the other affected variables
 	for i := uint8(0); i < uint8(len(rows)); i++ {
 		if utils.TestBit(rows[i], constantRow) {
 			result++

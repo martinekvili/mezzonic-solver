@@ -19,9 +19,12 @@ func TestTestBit(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
+			// Act
 			result := TestBit(testCase.vector, testCase.index)
+
+			// Assert
 			if result != testCase.expectedResult {
-				t.Errorf("Invalid result: expected %v, got %v", testCase.expectedResult, result)
+				t.Errorf("Incorrect result: expected %v, got %v", testCase.expectedResult, result)
 			}
 		})
 	}
@@ -44,9 +47,12 @@ func TestSetBit(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
+			// Act
 			result := SetBit(testCase.vector, testCase.index)
+
+			// Assert
 			if result != testCase.expectedResult {
-				t.Errorf("Invalid result: expected %v, got %v", testCase.expectedResult, result)
+				t.Errorf("Incorrect result: expected %v, got %v", testCase.expectedResult, result)
 			}
 		})
 	}
@@ -69,9 +75,12 @@ func TestClearBit(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
+			// Act
 			result := ClearBit(testCase.vector, testCase.index)
+
+			// Assert
 			if result != testCase.expectedResult {
-				t.Errorf("Invalid result: expected %v, got %v", testCase.expectedResult, result)
+				t.Errorf("Incorrect result: expected %v, got %v", testCase.expectedResult, result)
 			}
 		})
 	}
