@@ -34,7 +34,7 @@ export const solveAsync = createAsyncThunk<
   { state: RootState }
 >("lightsOut/solve", async (_, { getState }) => {
   const board = selectBoard(getState());
-  return await solve(board);
+  return solve(board);
 });
 
 export const lightsOutSlice = createSlice({

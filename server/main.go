@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"server/api"
+	"server/solver"
 	"syscall"
 	"time"
 )
@@ -16,6 +17,8 @@ func main() {
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
+
+	api := setupApiWithDependencies()
 
 	handler := api.SetupHttpHandler()
 	srv := &http.Server{
@@ -43,4 +46,15 @@ func main() {
 	log.Println("Starting graceful shutdown process")
 	srv.Shutdown(ctx)
 	log.Println("Shutdown successful")
+}
+
+func setupApiWithDependencies() api.Api {
+	gaussianEliminator := solver.NewGaussianEliminator()
+
+	optimizer := solver.NewBruteForceOptimizer()
+	freeVariableFixer := solver.NewFreeVariableFixer(optimizer)
+
+	solver := solver.NewBoardSolver(gaussianEliminator, freeVariableFixer)
+
+	return api.New(solver)
 }

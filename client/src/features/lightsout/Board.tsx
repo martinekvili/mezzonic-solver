@@ -10,7 +10,7 @@ export function Board() {
       alignItems="stretch"
       spacing={1}
     >
-      {Array.from(Array(rowCount)).map((_, row) => (
+      {Array.from(Array(rowCount)).map((_0, row) => (
         <Stack
           key={`row_${row}`}
           direction="row"
@@ -18,7 +18,7 @@ export function Board() {
           alignItems="stretch"
           spacing={1}
         >
-          {Array.from(Array(columnCount)).map((_, column) => (
+          {Array.from(Array(columnCount)).map((_1, column) => (
             <Tile
               key={`tile_${row * columnCount + column}`}
               index={row * columnCount + column}
