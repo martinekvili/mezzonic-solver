@@ -11,7 +11,7 @@ func TestZeroValueOptimizer(t *testing.T) {
 	result := optimizer.determineOptimalValues(&freeVariables)
 
 	// Assert
-	if result != 0 {
+	if result != 0b0 {
 		t.Errorf("Incorrect result: expected 0, got %v", result)
 	}
 }
@@ -27,7 +27,7 @@ func TestBruteForceOptimizer(t *testing.T) {
 			"No free variables",
 			make([]uint8, 0),
 			make([]uint32, 0),
-			0,
+			0b0,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0          -> 0 0            (0 + 0 = 0)                 *
@@ -39,7 +39,7 @@ func TestBruteForceOptimizer(t *testing.T) {
 				0b00_0000_0000_1000_0000_0000_0001,
 				0b00_0000_0000_1000_0000_0000_0010,
 			},
-			0,
+			0b0,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0          -> 1 1            (0 + 2 = 2)
@@ -51,7 +51,7 @@ func TestBruteForceOptimizer(t *testing.T) {
 				0b10_0000_0000_0000_0010_0000_0001,
 				0b10_0000_0000_0000_0010_0000_0010,
 			},
-			1,
+			0b1,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0 0        -> 1 0            (0 + 1 = 1)                 *
@@ -65,7 +65,7 @@ func TestBruteForceOptimizer(t *testing.T) {
 				0b10_0000_0000_1000_0000_0000_0001,
 				0b00_0000_1000_1000_0000_0000_0010,
 			},
-			0,
+			0b0_0,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0 0        -> 1 1 1 1 1      (0 + 5 = 5)
@@ -82,7 +82,7 @@ func TestBruteForceOptimizer(t *testing.T) {
 				0b10_0000_1000_1000_0000_0000_1000,
 				0b10_0000_1000_1000_0000_0001_0000,
 			},
-			2,
+			0b1_0,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0 0 0      -> 1 1 0 1 1      (0 + 4 = 4)
@@ -103,7 +103,13 @@ func TestBruteForceOptimizer(t *testing.T) {
 				0b10_0110_0000_0000_0000_0000_1000,
 				0b10_0100_0000_0000_0000_0001_0000,
 			},
-			5,
+			0b1_0_1,
+		},
+		{
+			"Multiple free variables, no affected rows",
+			[]uint8{1, 3, 5, 7, 9, 11},
+			make([]uint32, 0),
+			0b0_0_0_0_0_0,
 		},
 	}
 

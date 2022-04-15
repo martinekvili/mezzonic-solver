@@ -13,7 +13,7 @@ func NewZeroValueOptimizer() Optimizer {
 }
 
 func (zeroValueOptimizer) determineOptimalValues(freeVariables *freeVariables) uint32 {
-	return 0
+	return uint32(0)
 }
 
 type bruteForceOptimizer struct{}
@@ -23,6 +23,10 @@ func NewBruteForceOptimizer() Optimizer {
 }
 
 func (bruteForceOptimizer) determineOptimalValues(freeVariables *freeVariables) uint32 {
+	if len(freeVariables.indexes) == 0 || len(freeVariables.affectedRows) == 0 {
+		return uint32(0)
+	}
+
 	optimalValues := uint32(0)
 	optimalResult := calculateResultForValues(freeVariables, optimalValues)
 
