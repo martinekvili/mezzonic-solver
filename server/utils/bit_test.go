@@ -9,12 +9,42 @@ func TestTestBit(t *testing.T) {
 		index          uint8
 		expectedResult bool
 	}{
-		{"Empty vector, position 0", 0b0, 0, false},
-		{"Empty vector, position 15", 0b0, 15, false},
-		{"Full vector, position 0", 0b1_1111_1111_1111_1111_1111_1111, 0, true},
-		{"Full vector, position 22", 0b1_1111_1111_1111_1111_1111_1111, 22, true},
-		{"Random vector, position 6", 0b1111_1111_0001_0011_1100, 6, false},
-		{"Random vector, position 17", 0b1111_1111_0001_0011_1100, 17, true},
+		{
+			name:           "Empty vector, position 0",
+			vector:         0b0,
+			index:          0,
+			expectedResult: false,
+		},
+		{
+			name:           "Empty vector, position 15",
+			vector:         0b0,
+			index:          15,
+			expectedResult: false,
+		},
+		{
+			name:           "Full vector, position 0",
+			vector:         0b1_1111_1111_1111_1111_1111_1111,
+			index:          0,
+			expectedResult: true,
+		},
+		{
+			name:           "Full vector, position 22",
+			vector:         0b1_1111_1111_1111_1111_1111_1111,
+			index:          22,
+			expectedResult: true,
+		},
+		{
+			name:           "Random vector, position 6",
+			vector:         0b1111_1111_0001_0011_1100,
+			index:          6,
+			expectedResult: false,
+		},
+		{
+			name:           "Random vector, position 17",
+			vector:         0b1111_1111_0001_0011_1100,
+			index:          17,
+			expectedResult: true,
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -37,12 +67,42 @@ func TestSetBit(t *testing.T) {
 		index          uint8
 		expectedResult uint32
 	}{
-		{"Empty vector, position 0", 0b0, 0, 0b1},
-		{"Empty vector, position 15", 0b0, 15, 0b1000_0000_0000_0000},
-		{"Full vector, position 0", 0b1_1111_1111_1111_1111_1111_1111, 0, 0b1_1111_1111_1111_1111_1111_1111},
-		{"Full vector, position 22", 0b1_1111_1111_1111_1111_1111_1111, 22, 0b1_1111_1111_1111_1111_1111_1111},
-		{"Random vector, position 6", 0b1111_1111_0001_0011_1100, 6, 0b1111_1111_0001_0111_1100},
-		{"Random vector, position 17", 0b1111_1111_0001_0011_1100, 17, 0b1111_1111_0001_0011_1100},
+		{
+			name:           "Empty vector, position 0",
+			vector:         0b0,
+			index:          0,
+			expectedResult: 0b1,
+		},
+		{
+			name:           "Empty vector, position 15",
+			vector:         0b0,
+			index:          15,
+			expectedResult: 0b1000_0000_0000_0000,
+		},
+		{
+			name:           "Full vector, position 0",
+			vector:         0b1_1111_1111_1111_1111_1111_1111,
+			index:          0,
+			expectedResult: 0b1_1111_1111_1111_1111_1111_1111,
+		},
+		{
+			name:           "Full vector, position 22",
+			vector:         0b1_1111_1111_1111_1111_1111_1111,
+			index:          22,
+			expectedResult: 0b1_1111_1111_1111_1111_1111_1111,
+		},
+		{
+			name:           "Random vector, position 6",
+			vector:         0b1111_1111_0001_0011_1100,
+			index:          6,
+			expectedResult: 0b1111_1111_0001_0111_1100,
+		},
+		{
+			name:           "Random vector, position 17",
+			vector:         0b1111_1111_0001_0011_1100,
+			index:          17,
+			expectedResult: 0b1111_1111_0001_0011_1100,
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -65,12 +125,41 @@ func TestClearBit(t *testing.T) {
 		index          uint8
 		expectedResult uint32
 	}{
-		{"Empty vector, position 0", 0b0, 0, 0b0},
-		{"Empty vector, position 15", 0b0, 15, 0b0},
-		{"Full vector, position 0", 0b1_1111_1111_1111_1111_1111_1111, 0, 0b1_1111_1111_1111_1111_1111_1110},
-		{"Full vector, position 22", 0b1_1111_1111_1111_1111_1111_1111, 22, 0b1_1011_1111_1111_1111_1111_1111},
-		{"Random vector, position 6", 0b1111_1111_0001_0011_1100, 6, 0b1111_1111_0001_0011_1100},
-		{"Random vector, position 17", 0b1111_1111_0001_0011_1100, 17, 0b1101_1111_0001_0011_1100},
+		{
+			name:           "Empty vector, position 0",
+			vector:         0b0,
+			index:          0,
+			expectedResult: 0b0,
+		},
+		{
+			name:           "Empty vector, position 15",
+			vector:         0b0,
+			index:          15,
+			expectedResult: 0b0,
+		},
+		{
+			name:           "Full vector, position 0",
+			vector:         0b1_1111_1111_1111_1111_1111_1111,
+			index:          0,
+			expectedResult: 0b1_1111_1111_1111_1111_1111_1110,
+		},
+		{
+			name:           "Full vector, position 22",
+			vector:         0b1_1111_1111_1111_1111_1111_1111,
+			index:          22,
+			expectedResult: 0b1_1011_1111_1111_1111_1111_1111},
+		{
+			name:           "Random vector, position 6",
+			vector:         0b1111_1111_0001_0011_1100,
+			index:          6,
+			expectedResult: 0b1111_1111_0001_0011_1100,
+		},
+		{
+			name:           "Random vector, position 17",
+			vector:         0b1111_1111_0001_0011_1100,
+			index:          17,
+			expectedResult: 0b1101_1111_0001_0011_1100,
+		},
 	}
 
 	for _, testCase := range testCases {

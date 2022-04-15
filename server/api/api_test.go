@@ -32,20 +32,48 @@ func TestInvalidRequest(t *testing.T) {
 		httpPath           string
 		expectedStatusCode int
 	}{
-		{"Incorrect path", "GET", "/api/solution", http.StatusNotFound},
-		{"Out-of-bound board (negative)", "GET", "/api/solutions/-1", http.StatusNotFound},
-		{"Out-of-bound board (too big)", "GET", "/api/solutions/100000", http.StatusNotFound},
-		{"Out-of-bound board (not a base32 number)", "GET", "/api/solutions/cyp", http.StatusNotFound},
-		{"Invalid method", "POST", "/api/solutions/c1p", http.StatusMethodNotAllowed},
+		{
+			name:               "Incorrect path",
+			httpMethod:         "GET",
+			httpPath:           "/api/solution",
+			expectedStatusCode: http.StatusNotFound,
+		},
+		{
+			name:               "Out-of-bound board (negative)",
+			httpMethod:         "GET",
+			httpPath:           "/api/solutions/-1",
+			expectedStatusCode: http.StatusNotFound,
+		},
+		{
+			name:               "Out-of-bound board (too big)",
+			httpMethod:         "GET",
+			httpPath:           "/api/solutions/100000",
+			expectedStatusCode: http.StatusNotFound,
+		},
+		{
+			name:               "Out-of-bound board (not a base32 number)",
+			httpMethod:         "GET",
+			httpPath:           "/api/solutions/cyp",
+			expectedStatusCode: http.StatusNotFound,
+		},
+		{
+			name:               "Invalid method",
+			httpMethod:         "POST",
+			httpPath:           "/api/solutions/c1p",
+			expectedStatusCode: http.StatusMethodNotAllowed,
+		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			// Arrage
-			solver := &mockSolver{t: t, solutions: map[uint32]struct {
-				solvable       bool
-				solutionNumber uint32
-			}{}}
+			solver := &mockSolver{
+				t: t,
+				solutions: map[uint32]struct {
+					solvable       bool
+					solutionNumber uint32
+				}{},
+			}
 			api := New(solver)
 			handler := api.SetupHttpHandler()
 
@@ -73,18 +101,47 @@ func TestSuccessfulRequest(t *testing.T) {
 		solutionNumber       uint32
 		expectedResponseBody string
 	}{
-		{"No solution", "none", 778990, false, 0, "{\"hasSolution\":false,\"solution\":null}\n"},
-		{"Empty solution", "emptv", 15427519, true, 0, "{\"hasSolution\":true,\"solution\":[]}\n"},
-		{"Solution with multpile clicks", "c1p", 12345, true, 31, "{\"hasSolution\":true,\"solution\":[0,1,2,3,4]}\n"},
+		{
+			name:                 "No solution",
+			boardString:          "none",
+			boardNumber:          778990,
+			solvable:             false,
+			solutionNumber:       0b0,
+			expectedResponseBody: "{\"hasSolution\":false,\"solution\":null}\n",
+		},
+		{
+			name:                 "Empty solution",
+			boardString:          "emptv",
+			boardNumber:          15427519,
+			solvable:             true,
+			solutionNumber:       0b0,
+			expectedResponseBody: "{\"hasSolution\":true,\"solution\":[]}\n",
+		},
+		{
+			name:                 "Solution with multpile clicks",
+			boardString:          "c1p",
+			boardNumber:          12345,
+			solvable:             true,
+			solutionNumber:       0b1_1111,
+			expectedResponseBody: "{\"hasSolution\":true,\"solution\":[0,1,2,3,4]}\n",
+		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			// Arrage
-			solver := &mockSolver{t: t, solutions: map[uint32]struct {
-				solvable       bool
-				solutionNumber uint32
-			}{testCase.boardNumber: {testCase.solvable, testCase.solutionNumber}}}
+			solver := &mockSolver{
+				t: t,
+				solutions: map[uint32]struct {
+					solvable       bool
+					solutionNumber uint32
+				}{
+					testCase.boardNumber: {
+						solvable:       testCase.solvable,
+						solutionNumber: testCase.solutionNumber,
+					},
+				},
+			}
 			api := New(solver)
 			handler := api.SetupHttpHandler()
 

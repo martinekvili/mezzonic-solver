@@ -24,34 +24,34 @@ func TestBruteForceOptimizer(t *testing.T) {
 		expectedResult uint32
 	}{
 		{
-			"No free variables",
-			make([]uint8, 0),
-			make([]uint32, 0),
-			0b0,
+			name:           "No free variables",
+			indexes:        make([]uint8, 0),
+			affectedRows:   make([]uint32, 0),
+			expectedResult: 0b0,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0          -> 0 0            (0 + 0 = 0)                 *
 		// 1          -> 1 1            (1 + 2 = 3)
 		{
-			"Single free variable, expect 0",
-			[]uint8{15},
-			[]uint32{
+			name:    "Single free variable, expect 0",
+			indexes: []uint8{15},
+			affectedRows: []uint32{
 				0b00_0000_0000_1000_0000_0000_0001,
 				0b00_0000_0000_1000_0000_0000_0010,
 			},
-			0b0,
+			expectedResult: 0b0,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0          -> 1 1            (0 + 2 = 2)
 		// 1          -> 0 0            (1 + 0 = 1)                 *
 		{
-			"Single free variable, expect 1",
-			[]uint8{9},
-			[]uint32{
+			name:    "Single free variable, expect 1",
+			indexes: []uint8{9},
+			affectedRows: []uint32{
 				0b10_0000_0000_0000_0010_0000_0001,
 				0b10_0000_0000_0000_0010_0000_0010,
 			},
-			0b1,
+			expectedResult: 0b1,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0 0        -> 1 0            (0 + 1 = 1)                 *
@@ -59,13 +59,13 @@ func TestBruteForceOptimizer(t *testing.T) {
 		// 0 1        -> 1 1            (0 + 2 = 3)
 		// 1 1        -> 0 0            (2 + 0 = 2)
 		{
-			"Two free variables, expect (0, 0)",
-			[]uint8{15, 19},
-			[]uint32{
+			name:    "Two free variables, expect (0, 0)",
+			indexes: []uint8{15, 19},
+			affectedRows: []uint32{
 				0b10_0000_0000_1000_0000_0000_0001,
 				0b00_0000_1000_1000_0000_0000_0010,
 			},
-			0b0_0,
+			expectedResult: 0b0_0,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0 0        -> 1 1 1 1 1      (0 + 5 = 5)
@@ -73,16 +73,16 @@ func TestBruteForceOptimizer(t *testing.T) {
 		// 0 1        -> 0 0 0 0 0      (1 + 0 = 1)                 *
 		// 1 1        -> 0 0 1 1 1      (2 + 3 = 5)
 		{
-			"Two free variables, expect (0, 1)",
-			[]uint8{19, 15},
-			[]uint32{
+			name:    "Two free variables, expect (0, 1)",
+			indexes: []uint8{19, 15},
+			affectedRows: []uint32{
 				0b10_0000_0000_1000_0000_0000_0001,
 				0b10_0000_0000_1000_0000_0000_0010,
 				0b10_0000_1000_1000_0000_0000_0100,
 				0b10_0000_1000_1000_0000_0000_1000,
 				0b10_0000_1000_1000_0000_0001_0000,
 			},
-			0b1_0,
+			expectedResult: 0b1_0,
 		},
 		// Free state -> Affected state (free + affected = total) | Best
 		// 0 0 0      -> 1 1 0 1 1      (0 + 4 = 4)
@@ -94,22 +94,22 @@ func TestBruteForceOptimizer(t *testing.T) {
 		// 0 1 1      -> 0 0 1 1 0      (2 + 2 = 4)
 		// 1 1 1      -> 1 1 1 1 0      (3 + 4 = 7)
 		{
-			"Three free variables, expect (1, 0, 1)",
-			[]uint8{20, 21, 22},
-			[]uint32{
+			name:    "Three free variables, expect (1, 0, 1)",
+			indexes: []uint8{20, 21, 22},
+			affectedRows: []uint32{
 				0b10_0011_0000_0000_0000_0000_0001,
 				0b10_0011_0000_0000_0000_0000_0010,
 				0b00_0010_0000_0000_0000_0000_0100,
 				0b10_0110_0000_0000_0000_0000_1000,
 				0b10_0100_0000_0000_0000_0001_0000,
 			},
-			0b1_0_1,
+			expectedResult: 0b1_0_1,
 		},
 		{
-			"Multiple free variables, no affected rows",
-			[]uint8{1, 3, 5, 7, 9, 11},
-			make([]uint32, 0),
-			0b0_0_0_0_0_0,
+			name:           "Multiple free variables, no affected rows",
+			indexes:        []uint8{1, 3, 5, 7, 9, 11},
+			affectedRows:   make([]uint32, 0),
+			expectedResult: 0b0_0_0_0_0_0,
 		},
 	}
 
