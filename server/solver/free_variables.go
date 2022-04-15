@@ -48,6 +48,11 @@ func (f *freeVariableFixer) fixFreeVariables(augmentedMatrix *[MatrixSize]uint32
 }
 
 func findFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) freeVariables {
+	// Check for the edge case when all rows are empty
+	if finalRow == 0 {
+		return getFreeVariablesOfEmptyMatrix()
+	}
+
 	indexes := make([]uint8, 0)
 	affectedRowsMap := make(map[uint8]uint32)
 
@@ -82,6 +87,16 @@ func findFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) free
 	}
 
 	return freeVariables{indexes, affectedRows}
+}
+
+func getFreeVariablesOfEmptyMatrix() freeVariables {
+	// All rows of the matrix being empty means that all variables are free
+	indexes := make([]uint8, 0, MatrixSize)
+	for i := uint8(0); i < MatrixSize; i++ {
+		indexes = append(indexes, i)
+	}
+
+	return freeVariables{indexes: indexes, affectedRows: make([]uint32, 0)}
 }
 
 func getFreeVariableVector(index uint8, value bool) (vector uint32) {
