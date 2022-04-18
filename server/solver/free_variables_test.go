@@ -35,7 +35,7 @@ func (m *mockOptimizer) determineOptimalValues(freeVariables *freeVariables) uin
 
 	// Check whether it's OK to call the mock
 	if !m.allowCall {
-		m.t.Fatalf("Mock optimizer should not be called")
+		m.t.Fatal("Mock optimizer should not be called")
 		return 0
 	}
 
@@ -47,7 +47,7 @@ func (m *mockOptimizer) determineOptimalValues(freeVariables *freeVariables) uin
 	if reflect.DeepEqual(m.freeVariables, freeVariables) {
 		return m.optimalValues
 	} else {
-		m.t.Fatalf("Calling mock optimizer with unexpected input")
+		m.t.Fatal("Calling mock optimizer with unexpected input")
 		return 0
 	}
 }
