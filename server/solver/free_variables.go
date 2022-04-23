@@ -58,7 +58,7 @@ func findFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) free
 	signedJ := int8(MatrixSize - 1)
 
 	// Check the matrix for free variables
-	indexes := make([]uint8, 0, MatrixSize)
+	indexes := make([]uint8, 0)
 	for signedI >= 0 && signedJ >= 0 && signedI != signedJ {
 		i := uint8(signedI)
 		j := uint8(signedJ)
