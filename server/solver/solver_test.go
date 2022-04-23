@@ -275,3 +275,41 @@ func TestHasSolution(t *testing.T) {
 		t.Error("Free variable fixer was not called")
 	}
 }
+
+func benchmarkSolveBoard(b *testing.B, optimizer Optimizer) {
+	testCases := []struct {
+		name  string
+		board uint32
+	}{
+		{
+			name:  "Board with solution",
+			board: 0b11011_10101_01010_10101_11011,
+		},
+		{
+			name:  "Board with no solution",
+			board: 0b10001_00000_00000_00000_00001,
+		},
+	}
+
+	freeVariableFixer := NewFreeVariableFixer(optimizer)
+	gaussianEliminator := NewGaussianEliminator()
+	solver := NewBoardSolver(gaussianEliminator, freeVariableFixer)
+
+	for _, testCase := range testCases {
+		b.Run(testCase.name, func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				solver.SolveBoard(testCase.board)
+			}
+		})
+	}
+}
+
+func BenchmarkSolveBoardWithoutOptimizer(b *testing.B) {
+	optimizer := NewZeroValueOptimizer()
+	benchmarkSolveBoard(b, optimizer)
+}
+
+func BenchmarkSolveBoardWithOptimizer(b *testing.B) {
+	optimizer := NewBruteForceOptimizer()
+	benchmarkSolveBoard(b, optimizer)
+}

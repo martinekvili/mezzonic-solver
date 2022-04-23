@@ -1,6 +1,9 @@
 package solver
 
-import "server/utils"
+import (
+	"math/bits"
+	"server/utils"
+)
 
 type Optimizer interface {
 	determineOptimalValues(freeVariables *freeVariables) uint32
@@ -27,11 +30,13 @@ func (bruteForceOptimizer) determineOptimalValues(freeVariables *freeVariables) 
 		return uint32(0)
 	}
 
+	affectedSolution := getAffectedSolution(freeVariables)
+
 	optimalValues := uint32(0)
-	optimalResult := calculateResultForValues(freeVariables, optimalValues)
+	optimalResult := calculateResultForValues(freeVariables, affectedSolution, optimalValues)
 
 	for values := uint32(1); values < 1<<len(freeVariables.indexes); values++ {
-		result := calculateResultForValues(freeVariables, values)
+		result := calculateResultForValues(freeVariables, affectedSolution, values)
 		if optimalResult > result {
 			optimalValues = values
 			optimalResult = result
@@ -41,36 +46,36 @@ func (bruteForceOptimizer) determineOptimalValues(freeVariables *freeVariables) 
 	return optimalValues
 }
 
-func calculateResultForValues(freeVariables *freeVariables, values uint32) (result uint8) {
-	rows := make([]uint32, len(freeVariables.affectedRows))
-	copy(rows, freeVariables.affectedRows)
+func getAffectedSolution(freeVariables *freeVariables) (result uint32) {
+	for i, affectedRow := range freeVariables.affectedRows {
+		if utils.TestBit(affectedRow, constantRow) {
+			result = utils.SetBit(result, uint8(i))
+		}
+	}
 
+	return
+}
+
+func calculateResultForValues(freeVariables *freeVariables, affectedSolution uint32, values uint32) (result uint8) {
 	// Do back-substitution according to the current values
 	for i := uint8(0); i < uint8(len(freeVariables.indexes)); i++ {
-		value := utils.TestBit(values, i)
-		vector := getFreeVariableVector(freeVariables.indexes[i], value)
+		if !utils.TestBit(values, i) {
+			continue
+		}
 
-		for t := uint8(0); t < uint8(len(rows)); t++ {
-			if utils.TestBit(rows[t], freeVariables.indexes[i]) {
-				rows[t] ^= vector
+		for t := uint8(0); t < uint8(len(freeVariables.affectedRows)); t++ {
+			if utils.TestBit(freeVariables.affectedRows[t], freeVariables.indexes[i]) {
+				affectedSolution = utils.FlipBit(affectedSolution, t)
 			}
 		}
 	}
 
 	// Calculate the amount of "clicks" required in case of this solution
 	// The "clicks" needed for the free variables
-	for i := uint8(0); i < uint8(len(freeVariables.indexes)); i++ {
-		if utils.TestBit(values, i) {
-			result++
-		}
-	}
+	result = uint8(bits.OnesCount32(values))
 
 	// The "clicks" needed for the other affected variables
-	for i := uint8(0); i < uint8(len(rows)); i++ {
-		if utils.TestBit(rows[i], constantRow) {
-			result++
-		}
-	}
+	result += uint8(bits.OnesCount32(affectedSolution))
 
 	return result
 }
