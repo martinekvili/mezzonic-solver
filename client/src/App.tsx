@@ -1,4 +1,5 @@
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { ErrorMessage } from "./features/errorhandling/ErrorMessage";
 import { LightsOut } from "./features/lightsout/LightsOut";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <LightsOut />
+      <ErrorMessage />
     </ThemeProvider>
   );
 }

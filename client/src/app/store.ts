@@ -1,9 +1,11 @@
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
+import errorHandlingReducer from "../features/errorhandling/errorHandlingSlice";
 import lightsOutReducer from "../features/lightsout/lightsOutSlice";
 
 export const store = configureStore({
   reducer: {
     lightsOut: lightsOutReducer,
+    errorHandling: errorHandlingReducer,
   },
 });
 
