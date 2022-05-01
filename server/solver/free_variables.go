@@ -48,15 +48,18 @@ func (f *freeVariableFixer) fixFreeVariables(augmentedMatrix *[MatrixSize]uint32
 }
 
 func findFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) freeVariables {
-	indexes := make([]uint8, 0)
-	affectedRowsMap := make(map[uint8]uint32)
+	// Check for the edge case when all rows are empty
+	if finalRow == 0 {
+		return getFreeVariablesOfEmptyMatrix()
+	}
 
 	// Using signed index variables to eliminate the overflow at 0
 	signedI := int8(finalRow - 1)
 	signedJ := int8(MatrixSize - 1)
 
 	// Check the matrix for free variables
-	for signedI >= 0 && signedJ >= 0 {
+	indexes := make([]uint8, 0)
+	for signedI >= 0 && signedJ >= 0 && signedI != signedJ {
 		i := uint8(signedI)
 		j := uint8(signedJ)
 		pivotColumn := uint8(bits.TrailingZeros32(augmentedMatrix[i]))
@@ -64,24 +67,35 @@ func findFreeVariables(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) free
 		// Store the free variables
 		for ; j > pivotColumn; j-- {
 			indexes = append(indexes, j)
-
-			for t := uint8(0); t <= i; t++ {
-				if utils.TestBit(augmentedMatrix[t], j) {
-					affectedRowsMap[t] = augmentedMatrix[t]
-				}
-			}
 		}
 
 		signedI--
 		signedJ = int8(j) - 1
 	}
 
-	affectedRows := make([]uint32, 0, len(affectedRowsMap))
-	for _, affectedRow := range affectedRowsMap {
-		affectedRows = append(affectedRows, affectedRow)
+	if len(indexes) == 0 {
+		return freeVariables{indexes: indexes, affectedRows: make([]uint32, 0)}
+	}
+
+	// Find the rows in the matrix do not just have bits set in the pivot column
+	affectedRows := make([]uint32, 0, MatrixSize)
+	for i := uint8(0); i < finalRow; i++ {
+		if bits.OnesCount32(utils.ClearBit(augmentedMatrix[i], constantRow)) > 1 {
+			affectedRows = append(affectedRows, augmentedMatrix[i])
+		}
 	}
 
 	return freeVariables{indexes, affectedRows}
+}
+
+func getFreeVariablesOfEmptyMatrix() freeVariables {
+	// All rows of the matrix being empty means that all variables are free
+	indexes := make([]uint8, 0, MatrixSize)
+	for i := uint8(0); i < MatrixSize; i++ {
+		indexes = append(indexes, i)
+	}
+
+	return freeVariables{indexes: indexes, affectedRows: make([]uint32, 0)}
 }
 
 func getFreeVariableVector(index uint8, value bool) (vector uint32) {

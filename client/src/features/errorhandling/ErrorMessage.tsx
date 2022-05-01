@@ -1,5 +1,8 @@
 import { Alert, Slide, SlideProps, Snackbar, Typography } from "@mui/material";
-import { closeErrorMessage, selectShowErrorMessage } from "./lightsOutSlice";
+import {
+  closeErrorMessage,
+  selectShowErrorMessage,
+} from "./errorHandlingSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 export function ErrorMessage() {

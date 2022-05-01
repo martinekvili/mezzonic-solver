@@ -40,7 +40,7 @@ func transformToRowEchelon(augmentedMatrix *[MatrixSize]uint32) uint8 {
 		}
 
 		for t := i + 1; t < MatrixSize; t++ {
-			if utils.TestBit(augmentedMatrix[t], i) {
+			if utils.TestBit(augmentedMatrix[t], j) {
 				augmentedMatrix[t] ^= augmentedMatrix[i]
 			}
 		}
@@ -74,7 +74,7 @@ func hasForbiddenRow(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) bool {
 }
 
 func backSubstitution(augmentedMatrix *[MatrixSize]uint32, finalRow uint8) {
-	// Using signed index variables to eliminate the overflow at 0
+	// Using signed index variable to eliminate the overflow at 0
 	signedI := int8(finalRow - 1)
 
 	// Run back-substitution

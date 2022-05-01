@@ -11,3 +11,7 @@ func SetBit(vector uint32, index uint8) uint32 {
 func ClearBit(vector uint32, index uint8) uint32 {
 	return vector &^ (1 << index)
 }
+
+func FlipBit(vector uint32, index uint8) uint32 {
+	return vector ^ (1 << index)
+}
