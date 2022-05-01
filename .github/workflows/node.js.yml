@@ -2,14 +2,39 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, development ]
     paths:
       - '.github/workflows/node.js.yml'
       - 'client/**'
 
 jobs:
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+        cache: 'yarn'
+        cache-dependency-path: client/yarn.lock
+
+    - name: Install dependencies
+      working-directory: ./client
+      run: yarn install
+
+    - name: Build
+      working-directory: ./client
+      run: yarn build
+      env:
+        REACT_APP_API_BASE_URL: ${{secrets.API_BASE_URL}}
+
   publish:
     runs-on: ubuntu-latest
+    needs: [ test ]
+    if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v2
 
