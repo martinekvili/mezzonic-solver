@@ -22,6 +22,7 @@ export function Tile({ index }: TileProps) {
       selected={lit}
       disabled={status !== "setup" && status !== "solution"}
       onChange={() => dispatch(clickTile(index))}
+      disableTouchRipple
     >
       <FlagTwoToneIcon
         color="secondary"
