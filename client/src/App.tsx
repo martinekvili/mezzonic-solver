@@ -7,6 +7,15 @@ function App() {
     palette: {
       mode: "dark",
     },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 320,
+        md: 380,
+        lg: 600,
+        xl: 900,
+      },
+    },
   });
 
   return (

@@ -15,7 +15,7 @@ import { Information } from "./Information";
 
 export function LightsOut() {
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="lg">
       <AppBar position="static">
         <Toolbar variant="dense">
           <Grid4x4Icon fontSize="large" color="secondary" sx={{ mr: 2 }} />
