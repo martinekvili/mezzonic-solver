@@ -1,30 +1,19 @@
 import { Box, Button, Stack } from "@mui/material";
-import {
-  modify,
-  reset,
-  selectBoard,
-  selectStatus,
-  solveAsync,
-} from "./lightsOutSlice";
+import { modify, reset, selectStatus } from "./lightsOutSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import BuildIcon from "@mui/icons-material/Build";
 import CheckIcon from "@mui/icons-material/Check";
-import { LoadingButton } from "@mui/lab";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
-import { useMemo } from "react";
+import { SolveButton } from "./SolveButton";
 
 export function Actions() {
   const status = useAppSelector(selectStatus);
-  const board = useAppSelector(selectBoard);
   const dispatch = useAppDispatch();
 
   const showReset = status !== "solution" && status !== "done";
   const showSolve = status === "setup" || status === "loading";
   const showModify = status === "nosolution";
   const showDone = status === "solution" || status === "done";
-
-  const solveEnabled = useMemo(() => board.some((tile) => tile), [board]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -39,20 +28,7 @@ export function Actions() {
             Reset
           </Button>
         )}
-        {showSolve && (
-          <LoadingButton
-            size="large"
-            variant="contained"
-            color="secondary"
-            loadingPosition="start"
-            startIcon={<RocketLaunchIcon />}
-            disabled={!solveEnabled}
-            loading={status === "loading"}
-            onClick={() => dispatch(solveAsync())}
-          >
-            Solve
-          </LoadingButton>
-        )}
+        {showSolve && <SolveButton />}
         {showModify && (
           <Button
             size="large"

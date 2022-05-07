@@ -1,7 +1,13 @@
 import { ToggleButton, useMediaQuery, useTheme } from "@mui/material";
-import { clickTile, selectStatus, selectTile } from "./lightsOutSlice";
+import {
+  clickTile,
+  selectIsTileLit,
+  selectIsTilePartOfSolution,
+  selectStatus,
+} from "./lightsOutSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
+import { useMemo } from "react";
 
 interface TileProps {
   index: number;
@@ -9,9 +15,9 @@ interface TileProps {
 
 export function Tile({ index }: TileProps) {
   const status = useAppSelector(selectStatus);
-  const { lit, partOfSolution } = useAppSelector(selectTile(index));
   const dispatch = useAppDispatch();
 
+  const [isLit, isPartOfSolution] = useTileState(index);
   const [buttonSize, iconFontSize] = useResponsiveSizes();
 
   return (
@@ -19,7 +25,7 @@ export function Tile({ index }: TileProps) {
       value={index}
       size={buttonSize}
       fullWidth
-      selected={lit}
+      selected={isLit}
       disabled={status !== "setup" && status !== "solution"}
       onChange={() => dispatch(clickTile(index))}
       disableTouchRipple
@@ -29,11 +35,24 @@ export function Tile({ index }: TileProps) {
         fontSize={iconFontSize}
         sx={{
           visibility:
-            status === "solution" && partOfSolution ? "visible" : "hidden",
+            status === "solution" && isPartOfSolution ? "visible" : "hidden",
         }}
       />
     </ToggleButton>
   );
+}
+
+function useTileState(index: number): [boolean, boolean | undefined] {
+  const isTileLitSelector = useMemo(() => selectIsTileLit(index), [index]);
+  const isLit = useAppSelector(isTileLitSelector);
+
+  const isTilePartOfSolutionSelector = useMemo(
+    () => selectIsTilePartOfSolution(index),
+    [index]
+  );
+  const isPartOfSolution = useAppSelector(isTilePartOfSolutionSelector);
+
+  return [isLit, isPartOfSolution];
 }
 
 function useResponsiveSizes(): [

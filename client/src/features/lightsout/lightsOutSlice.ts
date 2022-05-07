@@ -104,11 +104,10 @@ export const { reset, modify, clickTile } = lightsOutSlice.actions;
 
 export const selectStatus = (state: RootState) => state.lightsOut.status;
 export const selectBoard = (state: RootState) => state.lightsOut.board;
-export const selectTile = (index: number) => (state: RootState) => ({
-  lit: state.lightsOut.board[index],
-  partOfSolution: state.lightsOut.solution
-    ? state.lightsOut.solution[index]
-    : undefined,
-});
+export const selectIsTileLit = (index: number) => (state: RootState) =>
+  state.lightsOut.board[index];
+export const selectIsTilePartOfSolution =
+  (index: number) => (state: RootState) =>
+    state.lightsOut.solution ? state.lightsOut.solution[index] : undefined;
 
 export default lightsOutSlice.reducer;
