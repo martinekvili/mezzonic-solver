@@ -1,0 +1,27 @@
+{
+    "name": "Go",
+    "image": "mcr.microsoft.com/vscode/devcontainers/go:0-1.19",
+
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "go.toolsManagement.checkForUpdates": "local",
+                "go.useLanguageServer": true,
+                "go.gopath": "/go",
+                "go.goroot": "/usr/local/go"
+            },
+            "extensions": [
+                "golang.Go"
+            ]
+        }
+    },
+
+    "portsAttributes": {
+        "8080": {
+            "label": "Mezzonic Solver Server Port",
+            "onAutoForward": "notify"
+        }
+    },
+
+    "remoteUser": "vscode"
+}
