@@ -1,0 +1,25 @@
+{
+    "name": "Node.js",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:0-16-bullseye",
+
+    "customizations": {
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    },
+
+    "portsAttributes": {
+        "3000": {
+            "label": "Mezzonlic Solver Frontend Port",
+            "onAutoForward": "notify"
+        }
+    },
+
+    "postCreateCommand": "yarn install",
+
+    "remoteUser": "node"
+}

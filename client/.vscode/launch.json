@@ -5,15 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch",
-            "type": "go",
+            "command": "yarn start",
+            "name": "Run yarn start",
             "request": "launch",
-            "mode": "debug",
-            "program": "${workspaceFolder}/main.go",
-            "env": {
-                "PORT": "8080",
-                "FRONTEND_URL": "http://localhost:3000"
-            }
+            "type": "node-terminal"
         }
     ]
 }
