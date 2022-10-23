@@ -1,6 +1,5 @@
 module server
 
-// +heroku goVersion go1.18
 go 1.19
 
 require (
