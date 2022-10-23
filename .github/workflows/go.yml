@@ -42,18 +42,37 @@ jobs:
       run: go test ./...
 
   deploy:
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+   
     runs-on: ubuntu-latest
     needs: [ build, test ]
-    if: github.ref == 'refs/heads/main'
+#    if: github.ref == 'refs/heads/main'
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-    - name: Deploy to Heroku
-      uses: akhileshns/heroku-deploy@v3.12.12
+    - name: Google Cloud Auth
+      id: auth
+      uses: 'google-github-actions/auth@v0'
       with:
-        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: 'mezzonic-solver'
-        heroku_email: ${{secrets.HEROKU_EMAIL}}
-        appdir: 'server'
-        dontautocreate: true
-        dontuseforce: true
+        token_format: 'access_token'
+        workload_identity_provider: '${{ secrets.GCLOUD_IDENTITY_PROVIDER }}'
+        service_account: '${{ secrets.GCLOUD_SERVICE_ACCOUNT }}'
+
+    # Authenticate Docker to Google Cloud Artifact Registry
+    - name: Docker Auth
+      id: docker-auth
+      uses: 'docker/login-action@v2'
+      with:
+        username: 'oauth2accesstoken'
+        password: '${{ steps.auth.outputs.access_token }}'
+        registry: 'europe-west1-docker.pkg.dev'
+
+    - name: Build and Push Container
+      working-directory: ./server
+      run: |-
+        docker build -t "europe-west1-docker.pkg.dev/mezzonic-solver/mezzonic-solver/mezzonic-solver" .
+        docker push "europe-west1-docker.pkg.dev/mezzonic-solver/mezzonic-solver/mezzonic-solver"
